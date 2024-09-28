@@ -1,8 +1,14 @@
 {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/"
-      }
-    ]
-  }
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "installCommand": "npm install --legacy-peer-deps"
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
