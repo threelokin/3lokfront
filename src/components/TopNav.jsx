@@ -1,15 +1,3 @@
-// import React from 'react';
-
-// const TopNav = () => {
-//   return (
-//     <nav className="bg-white p-4 h-14 flex justify-between shadow-lg fixed  w-full z-10">
-//       <div className="text-gray-800 font-bold text-lg">3 lok News</div>
-//       <div className="text-gray-800">Menu Icon</div>
-//     </nav>
-//   );
-// };
-
-// export default TopNav;
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -40,7 +28,7 @@ const TopNav = ({ onLanguageSelect }) => {
   };
 
 
-
+const logo = '/logo.png';
 
   const englishNavItems = {
     home: 'Home',
@@ -60,18 +48,21 @@ const TopNav = ({ onLanguageSelect }) => {
 
   return (
     <div>
-      <nav className="fixed top-0 left-0 w-full p-2 bg-white shadow-md z-40 h-14">
+      <nav className="fixed top-0 left-0 w-full  bg-white shadow-md z-40 h-14">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <span className=" font-bold">
-            <div className="text-gray-800 font-bold text-md  py-1 px-2 playwrite-dk-uloopet">
-            <span className='text-blue-700 text-2xl'>3</span>{language === 'te' ? 'లోక్ న్యూస్' : 'Lok News'}</div>
+            <span className="">
+                <div className='-mt-3'>
+            {/* <div className="text-gray-800 font-bold text-md  py-1 px-2 playwrite-dk-uloopet"> */}
+            {/* <span className='text-blue-700 text-2xl'>3</span>{language === 'te' ? 'లోక్ న్యూస్' : 'Lok News'} */}
+        <img src={logo} alt="3Lok News" className=' h-20'/>
+            </div>
             </span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center ">
             <>
               {!menuOpen && (
-                <button onClick={toggleMenu} className="text-black-900 text-2xl mr-2 focus:outline-none">
+                <button onClick={toggleMenu} className="text-black-900 text-2xl mr-3 focus:outline-none -mt-3">
                   <HiMenuAlt3 />
                 </button>
               )}
