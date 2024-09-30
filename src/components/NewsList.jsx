@@ -226,8 +226,14 @@ const NewsList = ({ language }) => {
           files: [file],
         });
       } else {
-        console.log('Web Share API not supported');
-        window.ReactNativeWebView.postMessage('shareNews');
+        // console.log('Web Share API not supported');
+        // window.ReactNativeWebView.postMessage('shareNews');
+        window.ReactNativeWebView.postMessage(JSON.stringify({
+  title: article.title,
+  description: truncateDescription(article.description),
+  imageUrl: article.imageUrl // or however you are storing the image URL
+}));
+
       }
 
       // Remove watermark
