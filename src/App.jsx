@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import TopNav from './components/TopNav';
 import BottomNav from './components/BottomNav';
 import LanguageSelection from './components/LanguageSelection';
@@ -14,12 +14,38 @@ import NewsDetailPage from './components/NewsDetailPage';
 
 const App = () => {
   const [language, setLanguage] = useState(localStorage.getItem('language') || '');
+  const [navVisible, setNavVisible] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
 
   useEffect(() => {
     if (!language) {
       setLanguage('');
     }
   }, [language]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop = window.scrollY;
+      if (currentScrollTop > lastScrollTop) {
+        setNavVisible(false);
+      } else {
+        setNavVisible(true);
+      }
+      setLastScrollTop(currentScrollTop);
+    };
+
+    const handleTap = () => {
+      setNavVisible(true);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('click', handleTap);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('click', handleTap);
+    };
+  }, [lastScrollTop]);
 
   if (!language) {
     return <LanguageSelection onSelect={setLanguage} />;
@@ -28,7 +54,7 @@ const App = () => {
   return (
     <NewsProvider>
       <Router>
-        <TopNav />
+        <TopNav visible={navVisible} />
         <Routes>
           <Route path="/" element={<Home language={language} />} />
           <Route path="/about" element={<AboutPage />} />
@@ -38,7 +64,7 @@ const App = () => {
           <Route path="/ainews" element={<NewsDetailPage />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
-        <BottomNav />
+        <BottomNav visible={navVisible} />
       </Router>
     </NewsProvider>
   );
