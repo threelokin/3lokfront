@@ -250,7 +250,7 @@ const NewsList = ({ language, onScroll }) => {
   };
 
   return (
-    <div ref={containerRef} className="h-screen overflow-y-scroll" style={{ scrollSnapType: 'y mandatory' }}>
+    <div ref={containerRef} className="h-screen overflow-y-scroll" >
       {news.length === 0 ? (
         <Skeleton />
       ) : (
@@ -261,9 +261,9 @@ const NewsList = ({ language, onScroll }) => {
           const imageHeightClass = calculateImageHeight(article.title, article.description);
 
           return (
-            <div key={article.article_id} id={`article-${article.article_id}`} className="h-screen flex flex-col relative" >
+            <div key={article.article_id} id={`article-${article.article_id}`} className="mb-4 shadow-2xl py-2 px-2 rounded-lg flex flex-col relative mx-2 mt-4" style={{ scrollSnapAlign: 'start' }}>
               <img
-                className={`w-full ${imageHeightClass} object-cover mt-16`}
+                className={`w-full h-52 object-cover `}
                 src={isValidImageUrl ? article.image_url : fallbackImage}
                 alt={article.title}
                 onError={(e) => {
@@ -271,18 +271,20 @@ const NewsList = ({ language, onScroll }) => {
                 }}
 
               />
-              <p className="text-xs text-gray-600 absolute mt-16 right-0  bg-white w-20 rounded-sm py-2  px-4">{formatDate(article.pubDate)}</p>
+              <p className="text-xs text-gray-600 absolute  right-0  bg-white w-20 rounded-sm py-2  px-4">{formatDate(article.pubDate)}</p>
               <div className='px-2'>
                 <h2 className="text-lg text-black font-semibold mt-2">{article.title}</h2>
                 <p className="text-lg text-gray-800 mt-1 overflow-hidden leading-8">{truncateDescription(article.description)}</p>
               </div>
-              <a href={article.link} target="_blank" rel="noopener noreferrer" className="absolute bottom-16 left-1 p-2 text-blue-700">{article.source_name}</a>
+              <div className='flex justify-between'>
+              <a href={article.link} target="_blank" rel="noopener noreferrer" className=" left-1 p-2 text-blue-700">{article.source_name}</a>
               <button
                 onClick={() => handleShare(article)}
-                className="absolute bottom-16 right-4 p-2 text-blue-700 text-lg"
+                className=" bottom-4 right-4 p-2 text-blue-700 text-lg "
               >
                 <FaShareAlt />
               </button>
+              </div>
             </div>
           );
         })
