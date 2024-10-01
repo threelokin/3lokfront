@@ -157,7 +157,7 @@ const NewsList = ({ language, onScroll }) => {
   const truncateDescription = (description) => {
     if (!description) return '';
     if (description.length > 380) {
-      return description.slice(0, 360) + '...';
+      return description.slice(0, 350) + '...';
     }
     return description;
   };
