@@ -269,7 +269,7 @@ const NewsList = ({ language, onScroll }) => {
                 onError={(e) => {
                   e.target.src = fallbackImage;
                 }}
-{/*                 crossOrigin="anonymous" */}
+
               />
               <p className="text-xs text-gray-600 absolute mt-16 right-0  bg-white w-20 rounded-sm py-2  px-4">{formatDate(article.pubDate)}</p>
               <div className='px-2'>
