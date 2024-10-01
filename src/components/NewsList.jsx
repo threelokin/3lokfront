@@ -261,7 +261,7 @@ const NewsList = ({ language, onScroll }) => {
           const imageHeightClass = calculateImageHeight(article.title, article.description);
 
           return (
-            <div key={article.article_id} id={`article-${article.article_id}`} className="h-screen flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
+            <div key={article.article_id} id={`article-${article.article_id}`} className="h-screen flex flex-col relative" >
               <img
                 className={`w-full ${imageHeightClass} object-cover mt-16`}
                 src={isValidImageUrl ? article.image_url : fallbackImage}
