@@ -2,14 +2,14 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { NewsContext } from '../context/NewsContext';
 import debounce from 'lodash/debounce';
-import Skeleton from './Skeleton'; // Import the Skeleton component
-import html2canvas from 'html2canvas'; // Import html2canvas for capturing the container as an image
+import Skeleton from './Skeleton';
+import html2canvas from 'html2canvas';
 import { FaShareAlt } from "react-icons/fa";
 
-const NewsList = ({ language }) => {
+const NewsList = ({ language, onScroll }) => {
   const { news, setNews, nextPage, setNextPage, scrollPosition, setScrollPosition } = useContext(NewsContext);
   const [loading, setLoading] = useState(false);
-  const [usePrimaryApi, setUsePrimaryApi] = useState(true); // Track which API is being used
+  const [usePrimaryApi, setUsePrimaryApi] = useState(true);
   const containerRef = useRef(null);
   const location = useLocation();
 
@@ -37,12 +37,11 @@ const NewsList = ({ language }) => {
         setNews(data.results);
         setNextPage(data.nextPage);
         localStorage.setItem('nextPage', data.nextPage);
-        localStorage.setItem('nextPageTimestamp', new Date().toLocaleString()); // Store the formatted timestamp
+        localStorage.setItem('nextPageTimestamp', new Date().toLocaleString());
       } catch (error) {
         console.error('Error fetching news:', error);
         if (language === 'telugu') {
-          // Switch API source if fetching fails
-          setUsePrimaryApi((prev) => !prev); // Toggle API source
+          setUsePrimaryApi((prev) => !prev);
         }
       }
     };
@@ -70,11 +69,11 @@ const NewsList = ({ language }) => {
       setNews([...news, ...data.results]);
       setNextPage(data.nextPage);
       localStorage.setItem('nextPage', data.nextPage);
-      localStorage.setItem('nextPageTimestamp', new Date().toLocaleString()); // Update the formatted timestamp
+      localStorage.setItem('nextPageTimestamp', new Date().toLocaleString());
     } catch (error) {
       console.error('Error loading more news:', error);
       if (language === 'telugu') {
-        setUsePrimaryApi((prev) => !prev); // Toggle API source
+        setUsePrimaryApi((prev) => !prev);
       }
     } finally {
       setLoading(false);
@@ -99,11 +98,11 @@ const NewsList = ({ language }) => {
       setNews([...news, ...data.results]);
       setNextPage(data.nextPage);
       localStorage.setItem('nextPage', data.nextPage);
-      localStorage.setItem('nextPageTimestamp', new Date().toLocaleString()); // Update the formatted timestamp
+      localStorage.setItem('nextPageTimestamp', new Date().toLocaleString());
     } catch (error) {
       console.error('Error prefetching next page:', error);
       if (language === 'telugu') {
-        setUsePrimaryApi((prev) => !prev); // Toggle API source
+        setUsePrimaryApi((prev) => !prev);
       }
     } finally {
       setLoading(false);
@@ -120,10 +119,11 @@ const NewsList = ({ language }) => {
     if (containerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
       setScrollPosition(scrollTop);
-      const buffer = 500; // Buffer of 500px
+      const buffer = 500;
       if (scrollTop + clientHeight >= scrollHeight - buffer) {
         loadMore();
       }
+      onScroll(scrollTop);
     }
   }, 100);
 
@@ -186,7 +186,6 @@ const NewsList = ({ language }) => {
     if (!container) return;
 
     try {
-      // Wait for images to load
       const images = container.querySelectorAll('img');
       const promises = Array.from(images).map(img => {
         if (img.complete) return Promise.resolve();
@@ -198,7 +197,6 @@ const NewsList = ({ language }) => {
 
       await Promise.all(promises);
 
-      // Add watermark
       const watermark = document.createElement('div');
       watermark.style.position = 'absolute';
       watermark.style.top = '10px';
@@ -211,8 +209,8 @@ const NewsList = ({ language }) => {
       container.appendChild(watermark);
 
       const canvas = await html2canvas(container, {
-        useCORS: true, // Enable CORS
-        allowTaint: false, // Allow tainting
+        useCORS: true,
+        allowTaint: false,
       });
       const image = canvas.toDataURL('image/jpeg');
 
@@ -226,20 +224,28 @@ const NewsList = ({ language }) => {
           files: [file],
         });
       } else {
-        // console.log('Web Share API not supported');
-        // window.ReactNativeWebView.postMessage('shareNews');
         window.ReactNativeWebView.postMessage(JSON.stringify({
-  title: article.title,
-  description: truncateDescription(article.description),
-  imageUrl: article.imageUrl // or however you are storing the image URL
-}));
-
+          title: article.title,
+          description: truncateDescription(article.description),
+          imageUrl: article.imageUrl
+        }));
       }
 
-      // Remove watermark
       container.removeChild(watermark);
     } catch (error) {
       console.error('Error sharing article:', error);
+    }
+  };
+
+  const calculateImageHeight = (title, description) => {
+    const titleHeight = title.length * 0.5;
+    const descriptionHeight = description.length * 0.2;
+    const totalHeight = titleHeight + descriptionHeight;
+
+    if (totalHeight < 120) {
+      return 'h-[40%]';
+    }  else {
+      return `h-[${50 - (totalHeight / 10)}%]`;
     }
   };
 
@@ -252,25 +258,28 @@ const NewsList = ({ language }) => {
           if (!isValidDescription(article.description)) return null;
 
           const isValidImageUrl = article.image_url && !invalidImages.includes(article.image_url);
+          const imageHeightClass = calculateImageHeight(article.title, article.description);
 
           return (
-            <div key={article.article_id} id={`article-${article.article_id}`} className="h-screen flex flex-col p-4 relative" style={{ scrollSnapAlign: 'start' }}>
+            <div key={article.article_id} id={`article-${article.article_id}`} className="h-screen flex flex-col relative" style={{ scrollSnapAlign: 'start' }}>
               <img
-                className="w-full h-52 object-cover rounded-lg mt-12"
-                src={isValidImageUrl ? article.image_url : fallbackImage} // Use fallback if imageUrl is invalid
+                className={`w-full ${imageHeightClass} object-cover mt-16`}
+                src={isValidImageUrl ? article.image_url : fallbackImage}
                 alt={article.title}
                 onError={(e) => {
-                  e.target.src = fallbackImage; // Use fallback image when original fails
+                  e.target.src = fallbackImage;
                 }}
-                crossOrigin="anonymous" // Set crossOrigin attribute
+                crossOrigin="anonymous"
               />
-              <h2 className="text-lg font-semibold mt-4">{article.title}</h2>
-              <p className="text-m text-gray-600 mt-2 overflow-hidden leading-8">{truncateDescription(article.description)}</p>
-              <p className="text-sm text-gray-600 mt-2">Published: {formatDate(article.pubDate)}</p>
-              <a href={article.link} target="_blank" rel="noopener noreferrer" className="absolute bottom-16 left-4 p-2 text-blue-700">source</a>
+              <p className="text-xs text-gray-600 absolute mt-16 right-0  bg-white w-20 rounded-sm py-2  px-4">{formatDate(article.pubDate)}</p>
+              <div className='px-2'>
+                <h2 className="text-lg text-black font-semibold mt-2">{article.title}</h2>
+                <p className="text-lg text-gray-800 mt-1 overflow-hidden leading-8">{truncateDescription(article.description)}</p>
+              </div>
+              <a href={article.link} target="_blank" rel="noopener noreferrer" className="absolute bottom-16 left-1 p-2 text-blue-700">{article.source_name}</a>
               <button
                 onClick={() => handleShare(article)}
-                className="absolute bottom-16 right-4 p-2 text-blue-700"
+                className="absolute bottom-16 right-4 p-2 text-blue-700 text-lg"
               >
                 <FaShareAlt />
               </button>
