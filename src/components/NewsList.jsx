@@ -273,8 +273,8 @@ const NewsList = ({ language, onScroll }) => {
               />
               <p className="text-xs text-gray-600 absolute  right-0  bg-white w-20 rounded-sm py-2  px-4">{formatDate(article.pubDate)}</p>
               <div className='px-2'>
-                <h2 className="text-lg text-black font-semibold mt-2">{article.title}</h2>
-                <p className="text-lg text-gray-800 mt-1 overflow-hidden leading-8">{truncateDescription(article.description)}</p>
+                <h2 className="text-xl text-black font-semibold mt-2 leading-8">{article.title}</h2>
+                <p className="text-lg text-gray-800 mt-1 overflow-hidden leading-10">{truncateDescription(article.description)}</p>
               </div>
               <div className='flex justify-between'>
               <a href={article.link} target="_blank" rel="noopener noreferrer" className=" left-1 p-2 text-blue-700">{article.source_name}</a>
